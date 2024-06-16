@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"video_call/internal/sendler"
+	"cellma/internal/sendler"
 )
 
 func main() {
