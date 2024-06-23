@@ -2,6 +2,7 @@ package getter
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -30,6 +31,16 @@ func GetStreamData(w http.ResponseWriter, r *http.Request) {
 
 		byteD = append(byteD, byteData...)
 		fmt.Printf("was sent: %v", byteD)
+
+		w.Header().Set("Content-Type", "video/mp4")
+		w.Header().Set("Content-Disposition", "inline; filename=video.mp4")
+
+		w, err := conn.NextWriter(messageType)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		w.Write(byteData)
 
 		if err := conn.WriteMessage(messageType, byteData); err != nil {
 			return

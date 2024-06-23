@@ -22,7 +22,8 @@ const constraints = {
             ideal: 1080,
             max: 1440
         },
-    }
+    },
+    audio: true
 };
 
 const getCameraSelection = async () => {
@@ -50,7 +51,6 @@ play.onclick = () => {
         };
         startStream(updatedConstraints);
     }
-
 };
 
 const startStream = async (constraints) => {
@@ -92,7 +92,9 @@ document.querySelector(".send-stream").addEventListener("click", async () => {
 
 
 // API GET STREAM DATA
-const contraints = { video: true }
+const videoAnUser = document.querySelector(".an-user-video")
+// const fs = require('fs');
+
 navigator.mediaDevices
     .getUserMedia(constraints)
     .then(mediaStream => {
@@ -105,16 +107,29 @@ navigator.mediaDevices
             
             console.log(blob)
 
-            // websocket
+            // WEBSOCKET
             const socket = new WebSocket('ws://localhost:3000/getstream');
             socket.binaryType = 'arraybuffer'
             socket.onopen = function(event) {
                 console.log("websocket connection established.");
                 socket.send(blob)
             }
+            // GET RESPONSE FROM WEBSERVER
             socket.onmessage = function(event) {
                 console.log('Messege from server: ', event.data)
                 // handle resonse from server
+                const mediaSource = new MediaSource()
+                const urlMS = URL.createObjectURL(mediaSource)
+                videoAnUser.src = urlMS
+
+                mediaSource.addEventListener("sourceopen", () => {
+                    const sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')
+                    sourceBuffer.addEventListener("updateend", () => {
+                        mediaSource.endOfStream();
+                        videoAnUser.play();
+                    })
+                    sourceBuffer.appendBuffer(event.data);
+                })
             }
         };
 
