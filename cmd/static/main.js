@@ -50,6 +50,7 @@ play.onclick = () => {
         };
         startStream(updatedConstraints);
     }
+
 };
 
 const startStream = async (constraints) => {
@@ -78,63 +79,44 @@ document.querySelector(".send-stream").addEventListener("click", async () => {
 
     if (sendToClients) {
         const msgString = JSON.stringify(msg);
-      
+
         if (msg.target && msg.target.length !== 0) {
-          sendToOneUser(msg.target, msgString);
+            sendToOneUser(msg.target, msgString);
         } else {
-          for (const connection of connectionArray) {
-            connection.send(msgString);
-          }
+            for (const connection of connectionArray) {
+                connection.send(msgString);
+            }
         }
-      }
-      
+    }
 })
 
-// ----------------- OLD ----------------- //
-// let video = document.createElement("video")
 
-// video.setAttribute('playsinline', '');
-// video.setAttribute('autoplay', '');
-// video.setAttribute('muted', '');
-// video.style.width = '200px';
-// video.style.height = '200px';
+// API GET STREAM DATA
+const contraints = { video: true }
+navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then(mediaStream => {
+        const recorder = new MediaRecorder(mediaStream)
 
+        recorder.ondataavailable = event => {
+            // get the Blob from the event
+            const blob = event.data
+            // and send that blob to the server...
+            
+            console.log(blob)
 
-// var facingMode = "user"; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
-// var constraints = {
-//     audio: false,
-//     video: {
-//         facingMode: facingMode
-//     }
-// };
+            // websocket
+            const socket = new WebSocket('ws://localhost:3000/getstream');
+            socket.binaryType = 'arraybuffer'
+            socket.onopen = function(event) {
+                console.log("websocket connection established.");
+                socket.send(blob)
+            }
+            socket.onmessage = function(event) {
+                console.log('Messege from server: ', event.data)
+                // handle resonse from server
+            }
+        };
 
-// navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
-//     video.srcObject = stream;
-// });
-
-// // Display
-// // const displayMediaOptions = {
-// //     video: {
-// //         displaySurface: "browser",
-// //     },
-// //     audio: {
-// //         suppressLocalAudioPlayback: false,
-// //     },
-// //     preferCurrentTab: false,
-// //     selfBrowserSurface: "exclude",
-// //     systemAudio: "include",
-// //     surfaceSwitching: "include",
-// //     monitorTypeSurfaces: "include",
-// // };
-
-// // (async function startCapture(displayMediaOptions) {
-// //     let captureStream;
-
-// //     try {
-// //         captureStream =
-// //             await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-// //     } catch (err) {
-// //         console.error(`Error: ${err}`);
-// //     }
-// //     return captureStream;
-// // })();
+        recorder.start(1000)
+    })
