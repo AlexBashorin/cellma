@@ -45,5 +45,10 @@ func GetStreamData(w http.ResponseWriter, r *http.Request) {
 		if err := conn.WriteMessage(messageType, byteData); err != nil {
 			return
 		}
+
+		if err := w.Close(); err != nil {
+			log.Fatal(err)
+			return
+		}
 	}
 }
