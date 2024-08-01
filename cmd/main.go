@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	// "cellma/internal/getter"
-	// "cellma/internal/sendler"
+	"cellma/internal/getter"
 	"cellma/internal/jwt_auth"
+	"cellma/internal/sendler"
 )
 
 func main() {
@@ -27,8 +27,8 @@ func main() {
 	http.HandleFunc("/login", jwt_auth.LoginHandler)
 	http.HandleFunc("/protected", jwt_auth.ProtectedHandler)
 
-	// http.HandleFunc("/getstream", getter.GetStreamData)
-	// http.HandleFunc("/sendstream", sendler.SendVideoStream)
+	http.HandleFunc("/getstream", getter.GetStreamData)
+	http.HandleFunc("/sendstream", sendler.SendVideoStream)
 
 	err := http.ListenAndServe(":3000", nil)
 	if err != nil {

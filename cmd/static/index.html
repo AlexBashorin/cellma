@@ -11,13 +11,9 @@
 </head>
 
 <body>
-    <div class="auth">
-        <input type="text" class="username">
-        <input type="text" class="password">
-        <button class="login-btn">login</button>
-    </div>
-
     <div class="display-cover">
+        <button class="create-meet">create meet</button>
+        <button class="join-meet">join meet</button>
         <video autoplay></video>
         <canvas class="d-none"></canvas>
 
@@ -27,25 +23,18 @@
             </select>
         </div>
 
-        <img class="screenshot-image d-none" alt="">
-
         <div class="controls">
             <button class="btn btn-danger play" title="Play"><i data-feather="play-circle"></i></button>
             <button class="btn btn-info pause d-none" title="Pause"><i data-feather="pause"></i></button>
-            <button class="btn btn-outline-success screenshot d-none" title="ScreenShot"><i
-                    data-feather="image"></i></button>
         </div>
-    </div>
 
-    <div class="an-user">
-        <video class="an-user-video" autoplay></video>
     </div>
+    <video class="w-2/6" autoplay controls="true" class="remoteClientVideo"></video>
 
     <button class="send-stream">send stream</button>
 
     <script src="https://unpkg.com/feather-icons"></script>
-    <!-- <script src="./main.js"></script> -->
-    <script src="./auth.js"></script>
+    <script src="./main.js"></script>
 </body>
 
 </html>
