@@ -2,6 +2,7 @@ package getter
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 
@@ -14,6 +15,11 @@ var upgrader = websocket.Upgrader{
 }
 
 func GetStreamData(w http.ResponseWriter, r *http.Request) {
+	bod, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(bod)
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		http.Error(w, "Could not upgrade to WebSocket", http.StatusInternalServerError)
@@ -32,8 +38,8 @@ func GetStreamData(w http.ResponseWriter, r *http.Request) {
 		byteD = append(byteD, byteData...)
 		fmt.Printf("was sent: %v", byteD)
 
-		w.Header().Set("Content-Type", "video/mp4")
-		w.Header().Set("Content-Disposition", "inline; filename=video.mp4")
+		// w.Header().Set("Content-Type", "video/mp4")
+		// w.Header().Set("Content-Disposition", "inline; filename=video.mp4")
 
 		w, err := conn.NextWriter(messageType)
 		if err != nil {
